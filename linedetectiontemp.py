@@ -9,13 +9,15 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 import cv2
+import speech_recognition as sr  
+
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
 # In[3]:
 
 
-image = mpimg.imread("lines.jpeg")
+image = mpimg.imread("test3.jpg")
 #printing out some stats and plotting
 print('This image is:', type(image), 'with dimesions:', image.shape)
 plt.imshow(image)  #call as plt.imshow(gray, cmap='gray') to show a grayscaled image
@@ -29,27 +31,71 @@ right_x1 = 0
 right_x2 = 0
 left_x1 = 0
 left_x2 = 0
-
+width = 0
+height = 0
 import math
 
 def listen(image):
+    r = sr.Recognizer()
+    dir(sr)
+    left = False
+    right = False
+    with sr.Microphone() as source:
+        print("Sppeak: ")
+        audio = r.listen(source)
+        print("speaked")
+        
+    try:
+        print("Start")
+        aud = r.recognize_google(audio)
+        print("Again")
+        audFile = aud.split()
+        print(audFile)
+        if "right" in audFile:
+            right = True
+        if "left" in audFile:
+            left = True
+    except sr.UnkownValueError:
+        print("Couldn't understand")
+    except sr.RequestError as e:
+        print("Could not request results; {0}".format(e))
     global y1
     global y2
     global right_x1
     global right_x2
     global left_x1
     global left_x2
-    
+    global height
+    global width
     #if hears right
     D = y1+y2
     print(D/2)
+    cars=cardetection(image)
+    print(cars)
+
+    for car in cars:
+        newy= car[1]+car[3]
+        if(right):
+            if newy>D/2 and cars[0]<(width/2):
+                print("STOPPPPPP")
+                return "STOP"
+        if(left):
+            if(newy>D/2 and cars[0] > width/2):
+                print("STOPPPPPP")
+                return "STOP"
+    left = False
+    right = False
+    print("GOOD TO GO")
+            
     #if hears left
         
     
     
 def cardetection(video):
     cap = cv2.imread(video)
+    global height 
     height= cap.shape[0]
+    global width
     width= cap.shape[1]
     print(height,width)
     # Trained XML classifiers describes some features of some object we want to detect
@@ -57,11 +103,11 @@ def cardetection(video):
 
 
     # convert to gray scale of each frames
-    gray = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
+    #gray = cv2.cvtColor(cap,cv2.COLOR_BGR2GRAY)
 
 
     # Detects cars of different sizes in the input image
-    cars = car_cascade.detectMultiScale(gray, 1.5, 1)
+    cars = car_cascade.detectMultiScale(cap, 1.1, 3)
 
     # To draw a rectangle in each cars
     
@@ -73,7 +119,7 @@ def cardetection(video):
     cv2.waitKey(0)
     cv2.imshow('video2', cap)
 
-
+    return cars
     # De-allocate any associated memory usage
     #cv2.destroyAllWindows()
 
@@ -309,6 +355,7 @@ def filter_colors(image):
 
 
 
+
 # In[29]:
 
 
@@ -378,5 +425,5 @@ vert = annotate_image(image)
 
 
 # Display an example image
-annotated_image = annotate_image(mpimg.imread('lines.jpeg'))
+annotated_image = annotate_image(mpimg.imread('test3.jpg'))
 plt.imshow(annotated_image)
