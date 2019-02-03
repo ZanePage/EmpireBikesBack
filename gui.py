@@ -1,37 +1,43 @@
-import tkinter
-import cv2
+from tkinter import *
+import linedetectiontemp as ld
+import matplotlib.image as mpimg
+# pip install pillow
 from PIL import Image, ImageTk
 
-# create a window
-window = tkinter.Tk()
+def getAnotatedImage():
+    return ld.annotate_image(mpimg.imread('lines.jpeg'))
 
-cv_img = cv2.imread("road.jpeg")
+class Window(Frame):
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
+        self.master = master
+        self.pack(fill=BOTH, expand=1)
 
-# get image dimensions
-height, width, no_channels = cv_img.shape
+        load = Image.open("lines.jpeg")
+        render = ImageTk.PhotoImage(load)
+        img = Label(self, image=render)
+        img.image = render
+        img.place(x=0, y=0)
 
-canvas = tkinter.Canvas(window, width = width, height = height)
-canvas.pack()
+class OtherWindow(Frame):
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
+        self.master = master
+        self.pack(fill=BOTH, expand=1)
 
-image = ImageTk.PhotoImage(image = Image.fromarray(cv_img))
-edged = ImageTk.PhotoImage(image = Image.fromarray(cv_img))
+        load = Image.open(getAnotatedImage())
+        render = ImageTk.PhotoImage(load)
+        img = Label(self, image=render)
+        img.image = render
+        img.place(x=0, y=0)
 
-# add image to Canvas
-# canvas.create_image(0, 0, image=photo, anchor=tkinter.NW)
 
-if panelA is None or panelB in None:
-    panelA = Label(image=image)
-    panelA.image = image
-    panelA.pack(side="left", padx=10, pady=10)
 
-    panelB = Label(image=edged)
-    panelB.image = edged
-    panelB.pack(side="right", padx=10, pady=10)
-
-else:
-    panelA.configure(image=image)
-    panelB.configure(image=edged)
-    panelA.image = image
-    panelB.image = edged
-# Run the window loop
-window.mainloop()
+root = Tk()
+right = Window(root)
+right.pack(side=RIGHT)
+left = OtherWindow(root)
+left.pack(side=LEFT)
+root.wm_title("Tkinter window")
+root.geometry("1500x450")
+root.mainloop()
