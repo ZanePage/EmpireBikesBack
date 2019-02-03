@@ -9,7 +9,7 @@ import speech_recognition as sr
 
 
 
-image = mpimg.imread("test3.jpg")
+image = mpimg.imread("lines.jpeg")
 #printing out some stats and plotting
 print('This image is:', type(image), 'with dimesions:', image.shape)
 plt.imshow(image)  #call as plt.imshow(gray, cmap='gray') to show a grayscaled image
@@ -406,10 +406,12 @@ def annotate_image(image_in):
 
 
 
-vert = annotate_image(image)
+# vert = annotate_image(image)
 
 
 
-# Display an example image
-annotated_image = annotate_image(mpimg.imread('test3.jpg'))
-plt.imshow(annotated_image)
+# # Display an example image
+# annotated_image = annotate_image(mpimg.imread('lines.jpeg'))
+# listen('lines.jpeg')
+# plt.imshow(annotated_image)
+# cv2.waitKey(0)

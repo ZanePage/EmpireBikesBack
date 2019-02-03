@@ -1,12 +1,13 @@
 from tkinter import *
 import linedetectiontemp as ld
 import matplotlib.image as mpimg
+import os
 # pip install pillow
 from PIL import Image, ImageTk
 from cv2 import imwrite
 
-def getAnotatedImage():
-    return ld.annotate_image(mpimg.imread('lines.jpeg'))
+# def getAnotatedImage():
+#     return ld.annotate_image(mpimg.imread('lines.jpeg'))
 
 class Window(Frame):
     def __init__(self, master=None):
@@ -26,15 +27,19 @@ class OtherWindow(Frame):
         self.master = master
         self.pack(fill=BOTH, expand=1)
 
-        load = Image.fromarray(getAnotatedImage())
+        load = Image.open("houghes.jpeg")
+        #load = Image.fromarray(getAnotatedImage())
         render = ImageTk.PhotoImage(load, master = root)
         img = Label(self, image=render)
         img.image = render
         img.place(x=0, y=0)
 
 
-imwrite("houghes.jpeg", getAnotatedImage())
+
 root = Tk()
+# if its clicked then run command
+b = Button(root, text = "Click")
+b.pack(side=BOTTOM)
 right = Window(root)
 right.pack(side=RIGHT)
 left = OtherWindow(root)
