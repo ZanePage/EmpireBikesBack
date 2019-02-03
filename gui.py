@@ -35,11 +35,16 @@ class OtherWindow(Frame):
         img.place(x=0, y=0)
 
 
-
 root = Tk()
 # if its clicked then run command
-b = Button(root, text = "Click")
-b.pack(side=BOTTOM)
+
+b = Button(root, text = "Speak")
+
+b['command'] = ld.listen
+b.pack()
+b2 = Button(root, text = "Exit")
+b2['command'] = ld.hi
+b2.pack()
 right = Window(root)
 right.pack(side=RIGHT)
 left = OtherWindow(root)

@@ -6,16 +6,6 @@ import cv2
 import speech_recognition as sr
 
 #get_ipython().run_line_magic('matplotlib', 'inline')
-
-
-
-image = mpimg.imread("lines.jpeg")
-#printing out some stats and plotting
-print('This image is:', type(image), 'with dimesions:', image.shape)
-plt.imshow(image)  #call as plt.imshow(gray, cmap='gray') to show a grayscaled image
-
-
-
 y1 = 0
 y2 = 0
 right_x1 = 0
@@ -24,6 +14,29 @@ left_x1 = 0
 left_x2 = 0
 width = 0
 height = 0
+
+    # Global parameters
+
+    # Gaussian smoothing
+kernel_size = 3
+
+# Canny Edge Detector
+low_threshold = 50
+high_threshold = 150
+
+# Region-of-interest vertices
+# We want a trapezoid shape, with bottom edge at the bottom of the image
+trap_bottom_width = 0.85  # width of bottom edge of trapezoid, expressed as percentage of image width
+trap_top_width = 0.07  # ditto for top edge of trapezoid
+trap_height = 0.4  # height of the trapezoid expressed as percentage of image height
+
+# Hough Transform
+rho = 2 # distance resolution in pixels of the Hough grid
+theta = 1 * np.pi/180 # angular resolution in radians of the Hough grid
+threshold = 15     # minimum number of votes (intersections in Hough grid cell)
+min_line_length = 10 #minimum number of pixels making up a line
+max_line_gap = 20    # maximum gap in pixels between connectable line segments
+
 import math
 
 def loop():
@@ -45,8 +58,8 @@ def loop():
             print("Could not request results; {0}".format(e))
         return r.recognize_google(audio)
 
-def listen(image):
-
+def listen():
+    image = "lines.jpeg"
     left = False
     right = False
     aux = loop()
@@ -72,11 +85,11 @@ def listen(image):
     for car in cars:
         newy= car[1]+car[3]
         if(right):
-            if newy>D/2 and cars[0]<(width/2):
+            if newy>D/2 and car[0]<(width/2):
                 print("STOPPPPPP")
                 return "STOP"
         if(left):
-            if(newy>D/2 and cars[0] > width/2):
+            if newy>D/2 and car[0] > width/2:
                 print("STOPPPPPP")
                 return "STOP"
     left = False
@@ -349,27 +362,6 @@ def filter_colors(image):
 
 
 
-# Global parameters
-
-# Gaussian smoothing
-kernel_size = 3
-
-# Canny Edge Detector
-low_threshold = 50
-high_threshold = 150
-
-# Region-of-interest vertices
-# We want a trapezoid shape, with bottom edge at the bottom of the image
-trap_bottom_width = 0.85  # width of bottom edge of trapezoid, expressed as percentage of image width
-trap_top_width = 0.07  # ditto for top edge of trapezoid
-trap_height = 0.4  # height of the trapezoid expressed as percentage of image height
-
-# Hough Transform
-rho = 2 # distance resolution in pixels of the Hough grid
-theta = 1 * np.pi/180 # angular resolution in radians of the Hough grid
-threshold = 15     # minimum number of votes (intersections in Hough grid cell)
-min_line_length = 10 #minimum number of pixels making up a line
-max_line_gap = 20    # maximum gap in pixels between connectable line segments
 
 
 
@@ -403,15 +395,30 @@ def annotate_image(image_in):
 
     return annotated_image
 
-
+def hi():
+    exit(0)
 
 
 # vert = annotate_image(image)
 
 
+# if __name__ == "__main__":
+
+
+
+image = mpimg.imread("lines.jpeg")
+#printing out some stats and plotting
+print('This image is:', type(image), 'with dimesions:', image.shape)
+plt.imshow(image)  #call as plt.imshow(gray, cmap='gray') to show a grayscaled image
+
+
+
 
 # # Display an example image
-# annotated_image = annotate_image(mpimg.imread('lines.jpeg'))
-# listen('lines.jpeg')
-# plt.imshow(annotated_image)
-# cv2.waitKey(0)
+annotated_image = annotate_image(mpimg.imread('lines.jpeg'))
+plt.imshow(annotated_image)
+cv2.waitKey(0)
+
+# if __name__ == "__main__":
+#     listen('lines.jpeg')
+
