@@ -3,6 +3,7 @@ import linedetectiontemp as ld
 import matplotlib.image as mpimg
 # pip install pillow
 from PIL import Image, ImageTk
+from cv2 import imwrite
 
 def getAnotatedImage():
     return ld.annotate_image(mpimg.imread('lines.jpeg'))
@@ -14,7 +15,7 @@ class Window(Frame):
         self.pack(fill=BOTH, expand=1)
 
         load = Image.open("lines.jpeg")
-        render = ImageTk.PhotoImage(load)
+        render = ImageTk.PhotoImage(load, master = root)
         img = Label(self, image=render)
         img.image = render
         img.place(x=0, y=0)
@@ -25,14 +26,14 @@ class OtherWindow(Frame):
         self.master = master
         self.pack(fill=BOTH, expand=1)
 
-        load = Image.open(getAnotatedImage())
-        render = ImageTk.PhotoImage(load)
+        load = Image.fromarray(getAnotatedImage())
+        render = ImageTk.PhotoImage(load, master = root)
         img = Label(self, image=render)
         img.image = render
         img.place(x=0, y=0)
 
 
-
+imwrite("houghes.jpeg", getAnotatedImage())
 root = Tk()
 right = Window(root)
 right.pack(side=RIGHT)
