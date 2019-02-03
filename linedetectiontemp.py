@@ -1,8 +1,3 @@
-# coding: utf-8
-
-# In[2]:
-
-
 #importing some useful packages
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -10,10 +5,8 @@ import numpy as np
 import cv2
 import speech_recognition as sr
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+#get_ipython().run_line_magic('matplotlib', 'inline')
 
-
-# In[3]:
 
 
 image = mpimg.imread("test3.jpg")
@@ -22,7 +15,6 @@ print('This image is:', type(image), 'with dimesions:', image.shape)
 plt.imshow(image)  #call as plt.imshow(gray, cmap='gray') to show a grayscaled image
 
 
-# In[28]:
 
 y1 = 0
 y2 = 0
@@ -34,30 +26,35 @@ width = 0
 height = 0
 import math
 
-def listen(image):
+def loop():
     r = sr.Recognizer()
-    dir(sr)
+    mic = sr.Microphone()
+
+    
+    with mic as source:
+        print("Speak:")
+        r.adjust_for_ambient_noise(source)
+        audio = r.listen(source, timeout=0)
+        try:
+            print("You said " + r.recognize_google(audio))
+            # if(r.recognize_google(audio) == "left"):
+            # 	print("Trying to turn left")
+        except sr.UnknownValueError:
+            print("Could not understand audio")
+        except sr.RequestError as e:
+            print("Could not request results; {0}".format(e))
+        return r.recognize_google(audio)
+
+def listen(image):
+
     left = False
     right = False
-    with sr.Microphone() as source:
-        print("Sppeak: ")
-        audio = r.listen(source)
-        print("speaked")
+    aux = loop()
+    if "right" in aux.split():
+        right = True
+    if "left" in aux.split():
+        left = True
 
-    try:
-        print("Start")
-        aud = r.recognize_google(audio)
-        print("Again")
-        audFile = aud.split()
-        print(audFile)
-        if "right" in audFile:
-            right = True
-        if "left" in audFile:
-            left = True
-    except sr.UnkownValueError:
-        print("Couldn't understand")
-    except sr.RequestError as e:
-        print("Could not request results; {0}".format(e))
     global y1
     global y2
     global right_x1
@@ -85,10 +82,6 @@ def listen(image):
     left = False
     right = False
     print("GOOD TO GO")
-
-    #if hears left
-
-
 
 def cardetection(video):
     cap = cv2.imread(video)
@@ -355,8 +348,6 @@ def filter_colors(image):
 
 
 
-# In[29]:
-
 
 # Global parameters
 
@@ -381,7 +372,6 @@ min_line_length = 10 #minimum number of pixels making up a line
 max_line_gap = 20    # maximum gap in pixels between connectable line segments
 
 
-# In[33]:
 
 
 def annotate_image(image_in):
@@ -414,13 +404,10 @@ def annotate_image(image_in):
     return annotated_image
 
 
-# In[34]:
 
 
 vert = annotate_image(image)
 
-
-# In[35]:
 
 
 # Display an example image
